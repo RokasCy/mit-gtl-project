@@ -16,8 +16,12 @@ def detect_parking(frame):
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-    detected_pixels = cv2.countNonZero(mask)
-    if detected_pixels > 35000:
-        return True
-    else:
-        return False
+    contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for cnt in contours:
+       area = cv2.contourArea(cnt)
+       if area > 5000:  # only keep large blobs
+           #x, y, w, h = cv2.boundingRect(cnt)
+           #cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+           return True
+
+    return False
