@@ -1,26 +1,23 @@
 import cv2
+import numpy as np
 
-cap = cv2.VideoCapture(0)
-while True:
-    ret, frame = cap.read()
+def detect_parking(frame):
 
-    # if frame not captured
-    if not ret:
-        print("failed to capture image")
-        break
+    # Hue Saturation Value
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    #getting red
+    lower_red = np.array([0, 120, 120], np.uint8)
+    upper_red = np.array([5, 255, 255], np.uint8)
+    mask = cv2.inRange(hsv, lower_red, upper_red)
 
-    # turns frame into black and white
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    # displays the frame in a window
-    cv2.imshow("Camera", gray)
+    #removing noise
+    kernel = np.ones((5, 5), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-    # cv2.waitKey(1) & 0xFF => removes removes extra bits, leaving only the first 8 bits to compare to the ascii code for q
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        print("Quitting...")
-        break
-
-cap.release()
-cv2.destroyAllWindows()
-
-# _, mask = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY_INV)
+    detected_pixels = cv2.countNonZero(mask)
+    if detected_pixels > 35000:
+        return True
+    else:
+        return False
