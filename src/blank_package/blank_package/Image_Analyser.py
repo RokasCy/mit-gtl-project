@@ -68,9 +68,9 @@ class ImageSaver(Node):
         dead_zone = 10  # pixels
         if abs(error) < dead_zone:
             self.move_forward()
-        elif error > 0:
-            self.turn_right(0.3)
         elif error < 0:
+            self.turn_right(0.3)
+        elif error > 0:
             self.turn_left(0.3)
 
     '''def rotate(self):
