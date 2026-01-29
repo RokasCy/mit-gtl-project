@@ -18,3 +18,7 @@
 **Version 2**
 
 * Extra features
+
+Presentation:
+
+https://www.canva.com/design/DAG_x1KG1tM/VbSqKU3PGnoHWI-EWCe2_w/edit?utm_content=DAG_x1KG1tM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
