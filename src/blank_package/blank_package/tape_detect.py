@@ -69,21 +69,6 @@ def detect_parking(frame):
     cy = y + h // 2
 
     print(get_postion(cx, cy, frame))
-    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
     return (True, cx, cy)
 
-
-'''def detect_road(frame):
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
-    lower_black = np.array([0, 0, 0])
-    upper_black = np.array([17, 255, 50])
-
-    black_mask = cv2.inRange(hsv, lower_black, upper_black)
-
-    kernel = np.ones((5, 5), np.uint8)
-    black_mask = cv2.morphologyEx(black_mask, cv2.MORPH_OPEN, kernel)
-    black_mask = cv2.morphologyEx(black_mask, cv2.MORPH_CLOSE, kernel)
-
-'''
