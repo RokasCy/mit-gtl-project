@@ -38,10 +38,6 @@ class ImageSaver(Node):
 
         self.counter += 1
 
-
-
-
-
     def pattern_analyser(self):
         # LEDPattern is a custom Duckietown Message
         msg = LEDPattern()
