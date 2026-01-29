@@ -26,7 +26,7 @@ class ImageSaver(Node):
         self.create_subscription(CompressedImage, f'/{self.vehicle_name}/image/compressed', self.save_image, 10)
 
         self.publisher_led = self.create_publisher(LEDPattern, f'/{self.vehicle_name}/led_pattern', 1)
-        self.timer_led = self.create_timer(1, self.publish_detection)
+        self.timer_led = self.create_timer(0.1, self.publish_detection)
 
         self.wheels_pub = self.create_publisher(WheelsCmdStamped, f'/{self.vehicle_name}/wheels_cmd', 10)
         self.timer_rotate  = self.create_timer(0.1, self.rotate)
@@ -39,7 +39,7 @@ class ImageSaver(Node):
         self.counter = 0
 
     def save_image(self, msg):
-        if self.counter % 30 != 0:
+        if self.counter % 20 != 0:
             self.counter += 1
             return
         with open(self.output_dir + str(self.counter) + '.jpg', 'wb') as f:
