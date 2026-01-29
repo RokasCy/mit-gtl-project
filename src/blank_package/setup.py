@@ -10,7 +10,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('lib/'+package_name,['blank_package/Image_Analyser.py']) #we added this line, add another if more nodes
+        ('lib/'+package_name,['blank_package/Image_Analyser.py' , 'blank_package/tape_detect.py']) #we added this line, add another if more nodes
     ],
     install_requires=['setuptools'],
     zip_safe=True,

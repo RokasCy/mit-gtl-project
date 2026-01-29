@@ -1,4 +1,4 @@
-FROM spgc/duckiebot-base-image:latest
+FROM krinkin/gtl-cy-2026-opencv
 
 SHELL ["/bin/bash", "-c"]
 
@@ -6,7 +6,7 @@ WORKDIR /workspace
 
 COPY requirements-apt.txt .
 COPY requirements-python.txt .
-
+RUN apt-get update
 RUN set -e; \
     if [ -s requirements-apt.txt ]; then \
         apt update; \
