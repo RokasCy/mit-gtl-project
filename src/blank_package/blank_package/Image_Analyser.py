@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import tape_detect
+import blank_package.tape_detect
 
 import os
 import rclpy
