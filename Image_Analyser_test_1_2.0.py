@@ -14,7 +14,6 @@ from geometry_msgs.msg import Twist
 from rclpy.time import Duration
 
 
-
 class ImageSaver(Node):
     def __init__(self):
         super().__init__('image_saver')
@@ -29,7 +28,7 @@ class ImageSaver(Node):
         self.timer_led = self.create_timer(0.1, self.publish_detection)
 
         self.wheels_pub = self.create_publisher(WheelsCmdStamped, f'/{self.vehicle_name}/wheels_cmd', 10)
-        #self.timer_rotate  = self.create_timer(0.1, self.rotate)
+        # self.timer_rotate  = self.create_timer(0.1, self.rotate)
 
         self.spotted_parking = False
         self.obj_x, self.obj_y = 0, 0
@@ -38,10 +37,11 @@ class ImageSaver(Node):
 
         self.counter = 0
 
-        self. going_to_parking = False
+        self.going_to_parking = False
         self.reached_parking = False
 
-        self. end_amount_of_frames = 0
+        self.end_amount_of_frames = 0
+        self.flash = False
 
     def save_image(self, msg):
         if not self.reached_parking:
@@ -49,19 +49,20 @@ class ImageSaver(Node):
                 self.counter += 1
                 return
 
-            #convert to 1D numpy array
+            # convert to 1D numpy array
             np_arr = np.frombuffer(msg.data, np.uint8)
-            #convert into BGR
+            # convert into BGR
             frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
             self.frame = frame
 
-            self.spotted_parking, self.obj_x, self.obj_y = tape_detect.detect_parking(frame, self.output_dir, self.counter)
+            self.spotted_parking, self.obj_x, self.obj_y = tape_detect.detect_parking(frame, self.output_dir,
+                                                                                      self.counter)
             self.counter += 1
 
             self.get_clock().sleep_for(Duration(seconds=0.5))
 
-            #test part
-            if self.end_amount_of_frames > 3 and self.going_to_parking:
+            # test part
+            if self.end_amount_of_frames > 5 and self.going_to_parking:
                 self.reached_parking = True
                 self.stop_movement()
                 self.get_logger().info("Reached parking spot!")
@@ -94,10 +95,6 @@ class ImageSaver(Node):
                 elif error < 0:
                     self.turn_left(0.1)
 
-
-        
-
-
     def run_wheels(self, frame_id, vel_left, vel_right):
         wheel_msg = WheelsCmdStamped()
         header = Header()
@@ -108,18 +105,18 @@ class ImageSaver(Node):
         wheel_msg.vel_right = vel_right
         self.wheels_pub.publish(wheel_msg)
 
-    def turn_left(self,speed):
+    def turn_left(self, speed):
         self.get_logger().info("Turning left")
         self.run_wheels('right_callback', 0.0, speed)
         self.get_clock().sleep_for(Duration(seconds=1))
         self.run_wheels('stop_callback', 0.0, 0.0)
 
-
-    def turn_right(self,speed):
+    def turn_right(self, speed):
         self.get_logger().info("Turning right")
         self.run_wheels('right_callback', speed, 0.0)
         self.get_clock().sleep_for(Duration(seconds=1))
         self.run_wheels('stop_callback', 0.0, 0.0)
+
     def move_forward(self):
         self.get_logger().info("Moving forward")
         self.run_wheels('forward_callback', 0.4, 0.4)
@@ -130,28 +127,44 @@ class ImageSaver(Node):
         self.get_logger().info("Stopping movement")
         self.run_wheels('stop_callback', 0.0, 0.0)
 
-
-
     def publish_detection(self):
         # LEDPattern is a custom Duckietown Message
         msg = LEDPattern()
 
-        if self.spotted_parking:
+
+        if self.reached_parking:
+           ''' self.get_logger().info("Reached parking/trying to switch lights")
+            if self.flash == False:
+                self.get_logger().info("Trying to switch lights to white")
+                pattern = ColorRGBA(r=1.0, g=1.0, b=1.0, a=1.0)
+                self.get_clock().sleep_for(Duration(seconds=0.1))
+                flash = True
+                return
+            if self.flash == True:
+                self.get_logger().info("Trying to switch lights to blue")
+                pattern = ColorRGBA(r=0.0, g=0.0, b=1.0, a=1.0)
+                self.get_clock().sleep_for(Duration(seconds=0.1))
+                flash = False
+                return
+'''
+           pattern = ColorRGBA(r=0.0, g=0.0, b=1.0, a=1.0)
+        elif self.spotted_parking:
             pattern = ColorRGBA(r=0.0, g=1.0, b=0.0, a=1.0)
         else:
             pattern = ColorRGBA(r=1.0, g=0.0, b=0.0, a=1.0)
-        
+
         # 5 Leds to fill
         msg.rgb_vals = [pattern] * 5
 
         self.publisher_led.publish(msg)
-    
+
 
 def main():
     rclpy.init()
     image_saver = ImageSaver()
     rclpy.spin(image_saver)
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
