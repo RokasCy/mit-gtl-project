@@ -61,7 +61,7 @@ class ImageSaver(Node):
             self.get_clock().sleep_for(Duration(seconds=0.5))
 
             # test part
-            if self.end_amount_of_frames > 10 and self.going_to_parking:
+            if self.end_amount_of_frames > 3 and self.going_to_parking:
                 self.reached_parking = True
                 self.stop_movement()
                 self.get_logger().info("Reached parking spot!")
