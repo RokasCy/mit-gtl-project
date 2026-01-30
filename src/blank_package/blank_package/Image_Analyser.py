@@ -150,7 +150,7 @@ class ImageSaver(Node):
         self.run_wheels('stop_callback', 0.0, 0.0)
 
     def roam(self):
-        self.get_logger().info("Moving forward")
+        self.get_logger().info("roam")
         self.run_wheels('forward_callback', -0.4, 0.4)
         self.get_clock().sleep_for(Duration(seconds=1))
         self.run_wheels('stop_callback', 0.0, 0.0)
