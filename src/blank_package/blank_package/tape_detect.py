@@ -36,7 +36,16 @@ def draw_borders(frame):
     cv2.line(frame, (0, bh), (imgw, bh), (0, 0, 255), 2)
     cv2.line(frame, (0, bh*2), (imgw, bh*2), (0, 0, 255), 2)
 
+def draw_dead_zone(frame):
+    imgh, imgw = frame.shape[0], frame.shape[1]
+    frame_center_x = imgw // 2
+
+    cv2.line(frame, (frame_center_x-50, 0), (frame_center_x-50, imgh), (255, 0, 0), 2)
+    cv2.line(frame, (frame_center_x+50, 0), (frame_center_x+50, imgh), (255, 0, 0), 2)
+
 def detect_parking(frame, dir, count):
+
+
     # Hue Saturation Value
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -57,8 +66,6 @@ def detect_parking(frame, dir, count):
     red_mask = cv2.morphologyEx(red_mask, cv2.MORPH_OPEN, kernel)
     red_mask = cv2.morphologyEx(red_mask, cv2.MORPH_CLOSE, kernel)
 
-    draw_borders(frame)
-
     #finding contours
     contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     max_cnt = max(contours, key=cv2.contourArea, default=None)
@@ -71,8 +78,8 @@ def detect_parking(frame, dir, count):
     cy = y + h // 2
 
     #print(get_postion(cx, cy, frame))
-    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    #cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    draw_dead_zone(frame)
     cv2.imwrite(f'{dir}/{count}.jpg', frame)
 
     return (True, cx, cy)
-
