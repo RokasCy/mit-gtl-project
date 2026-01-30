@@ -91,9 +91,9 @@ class ImageSaver(Node):
                 if abs(error) < dead_zone:
                     self.move_forward()
                 elif error > 0:
-                    self.turn_right(0.1)
+                    self.turn_right(0.7,0.1)
                 elif error < 0:
-                    self.turn_left(0.1)
+                    self.turn_left(0.7,0.1)
 
     def run_wheels(self, frame_id, vel_left, vel_right):
         wheel_msg = WheelsCmdStamped()
@@ -105,17 +105,17 @@ class ImageSaver(Node):
         wheel_msg.vel_right = vel_right
         self.wheels_pub.publish(wheel_msg)
 
-    def turn_left(self, speed):
+    def turn_left(self, start_speed,speed):
         self.get_logger().info("Turning left")
-        self.run_wheels('right_callback', 0.0, 1.0)
+        self.run_wheels('right_callback', 0.0, start_speed)
         self.get_clock().sleep_for(Duration(seconds=0.3))
         self.run_wheels('right_callback', 0.0, speed)
         self.get_clock().sleep_for(Duration(seconds=0.5))
         self.run_wheels('stop_callback', 0.0, 0.0)
 
-    def turn_right(self, speed):
+    def turn_right(self, start_speed,speed):
         self.get_logger().info("Turning left")
-        self.run_wheels('right_callback', 1.0, 0.0)
+        self.run_wheels('right_callback', start_speed, 0.0)
         self.get_clock().sleep_for(Duration(seconds=0.3))
         self.run_wheels('right_callback', speed, 0.0)
         self.get_clock().sleep_for(Duration(seconds=0.5))
