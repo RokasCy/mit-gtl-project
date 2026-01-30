@@ -107,19 +107,19 @@ class ImageSaver(Node):
     def turn_left(self, speed):
         self.get_logger().info("Turning left")
         self.run_wheels('right_callback', 0.0, speed)
-        self.get_clock().sleep_for(Duration(seconds=1))
+        self.get_clock().sleep_for(Duration(seconds=0.5))
         self.run_wheels('stop_callback', 0.0, 0.0)
 
     def turn_right(self, speed):
         self.get_logger().info("Turning right")
         self.run_wheels('right_callback', speed, 0.0)
-        self.get_clock().sleep_for(Duration(seconds=1))
+        self.get_clock().sleep_for(Duration(seconds=0.5))
         self.run_wheels('stop_callback', 0.0, 0.0)
 
     def move_forward(self):
         self.get_logger().info("Moving forward")
         self.run_wheels('forward_callback', 0.4, 0.4)
-        self.get_clock().sleep_for(Duration(seconds=1))
+        self.get_clock().sleep_for(Duration(seconds=0.5))
         self.run_wheels('stop_callback', 0.0, 0.0)
 
     def stop_movement(self):
@@ -132,14 +132,17 @@ class ImageSaver(Node):
 
 
         if self.reached_parking:
+            self.get_logger().info("Reached parking/trying to switch lights")
             flash = False
             for i in range(3):
-                if flash == False: 
+                if flash == False:
+                    self.get_logger().info("Trying to switch lights to white")
                     pattern = ColorRGBA(r=1.0, g=1.0, b=1.0, a=1.0)
                     self.get_clock().sleep_for(Duration(seconds=0.1))
                     flash = True
                     return
                 elif flash == True:
+                    self.get_logger().info("Trying to switch lights to blue")
                     pattern = ColorRGBA(r=0.0, g=0.0, b=1.0, a=1.0)
                     self.get_clock().sleep_for(Duration(seconds=0.1))
                     flash = False
