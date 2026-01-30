@@ -132,6 +132,20 @@ class ImageSaver(Node):
 
         if self.spotted_parking:
             pattern = ColorRGBA(r=0.0, g=1.0, b=0.0, a=1.0)
+        elif self.reached_parking:
+            flash = False
+            for i in range(3):
+                if flash == False: 
+                    pattern = ColorRGBA(r=1.0, g=1.0, b=1.0, a=1.0)
+                    self.get_clock().sleep_for(Duration(seconds=0.1))
+                    flash = True
+                    return
+                elif flash == True:
+                    pattern = ColorRGBA(r=0.0, g=0.0, b=1.0, a=1.0)
+                    self.get_clock().sleep_for(Duration(seconds=0.1))
+                    flash = False
+                    return
+            pattern = ColorRGBA(r=1.0, g=1.0, b=1.0, a=1.0)
         else:
             pattern = ColorRGBA(r=1.0, g=0.0, b=0.0, a=1.0)
 
